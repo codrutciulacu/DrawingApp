@@ -20,6 +20,7 @@ class CanvasView(context: Context, attr: AttributeSet) : View(context, attr) {
     private lateinit var imageViewModel: ImageViewModel
     private lateinit var extraCanvas: Canvas
     private lateinit var extraBitmap: Bitmap
+    private var imageFirebaseId = ""
 
     private val backgroundColor = ResourcesCompat.getColor(resources, R.color.backgroundColor, null)
     private val drawColor = ResourcesCompat.getColor(resources, R.color.paintColor, null)
@@ -78,8 +79,7 @@ class CanvasView(context: Context, attr: AttributeSet) : View(context, attr) {
     }
 
     private fun touchUp() {
-
-        imageViewModel.update(extraBitmap)
+        imageViewModel.update(imageFirebaseId, extraBitmap)
         path.reset()
     }
 
@@ -104,5 +104,12 @@ class CanvasView(context: Context, attr: AttributeSet) : View(context, attr) {
 
         currentX = motionTouchEventX
         currentY = motionTouchEventY
+
+        extraCanvas.drawPoint(motionTouchEventX, motionTouchEventY, paintBrush)
+    }
+
+    public fun setImageFirebaseId(firebaseId: String) {
+        this.imageFirebaseId = firebaseId
+
     }
 }

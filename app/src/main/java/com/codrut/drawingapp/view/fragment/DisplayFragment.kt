@@ -53,10 +53,7 @@ class DisplayFragment : Fragment() {
         val recyclerView: RecyclerView = view.findViewById(R.id.recyclerView)
         val manager: RecyclerView.LayoutManager = GridLayoutManager(context, 2)
         recyclerView.layoutManager = manager
-        imageViewModel.getImages().observe(this, Observer{ images ->
-            for(image in images)
-                Log.d(TAG, image.name)
-
+        imageViewModel.getImages().observe(viewLifecycleOwner, Observer { images ->
             recyclerView.adapter = ImageGridAdapter(images, context)
         })
     }
@@ -73,13 +70,13 @@ class DisplayFragment : Fragment() {
                 val drawingEditText = view.findViewById<EditText>(R.id.drawing_edit_text)
                 var drawingId: String = ""
 
-                imageViewModel.create(drawingEditText.text.toString()).observe(this, Observer<String> {
-                    drawingId = it
-                })
-
-                val intent = Intent(context!!, CanvasActivity::class.java)
-                intent.putExtra(IMAGE_FIREBASE_ID, drawingId)
-                startActivity(intent)
+                imageViewModel.create(drawingEditText.text.toString())
+                    .observe(viewLifecycleOwner, Observer {
+                        Log.d(TAG, it)
+                        val intent = Intent(context!!, CanvasActivity::class.java)
+                        intent.putExtra(IMAGE_FIREBASE_ID, it)
+                        startActivity(intent)
+                    })
             })
             .create()
 

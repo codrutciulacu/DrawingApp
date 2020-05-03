@@ -2,6 +2,7 @@ package com.codrut.drawingapp.viewModel
 
 import android.graphics.Bitmap
 import android.os.Build
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -11,6 +12,8 @@ import com.codrut.drawingapp.model.repository.ImageRepository
 import com.codrut.drawingapp.model.listener.ImageResponseListener
 import com.codrut.drawingapp.utils.ImageEncoder
 import java.util.stream.Collectors
+
+private const val TAG = "Image ViewModel"
 
 class ImageViewModel : ViewModel(),
     ImageResponseListener {
@@ -22,10 +25,10 @@ class ImageViewModel : ViewModel(),
         ImageRepository()
     }
 
-    public fun update(bitmap: Bitmap) : LiveData<String> {
+    public fun update(imageFirebaseId: String, bitmap: Bitmap) : LiveData<String> {
         val image = ImageEncoder.encodeImage(bitmap)
 
-        imageRepository.update(image)
+        imageRepository.update(imageFirebaseId, image)
 
         val liveData = MutableLiveData<String>()
         liveData.value = image
@@ -50,10 +53,10 @@ class ImageViewModel : ViewModel(),
     }
 
     override fun getImageId(id: String) {
+        Log.d(TAG, id)
         idLiveData.postValue(id)
     }
 
-    @RequiresApi(Build.VERSION_CODES.N)
     override fun getAllImages(images: List<Drawing>) {
         imageListLiveData.postValue(images)
     }

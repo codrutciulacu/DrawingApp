@@ -20,15 +20,16 @@ class ImageRepository {
             .addOnCompleteListener {
                 Log.d(TAG, "The images is uploaded")
                 if (it.isSuccessful) {
+                    Log.d(TAG, it.result!!.id)
                     imageResponseListener.getImageId(it.result!!.id)
                 }
             }
             .addOnFailureListener { e -> Log.e(TAG, "Error writing document", e) }
     }
 
-    fun update(encodedImage: String?) {
+    fun update(imageFirebaseId: String, encodedImage: String?) {
         storage.collection("images")
-            .document("img1")
+            .document(imageFirebaseId)
             .update(mapOf<String, String>("content" to encodedImage!!))
     }
 
@@ -55,7 +56,7 @@ class ImageRepository {
     }
 
     fun get(image: String, imageResponseListener: ImageResponseListener) {
-        storage.collection("images").document("img1").get()
+        storage.collection("images").document(image).get()
             .addOnCompleteListener {
                 if (it.isSuccessful) {
                     val drawing: Drawing = it.result!!.toObject(Drawing::class.java)!!
