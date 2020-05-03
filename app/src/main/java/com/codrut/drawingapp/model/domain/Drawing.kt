@@ -1,6 +1,11 @@
 package com.codrut.drawingapp.model.domain
 
-data class Drawing constructor(var name: String,
-                   var content: String) {
-    constructor() : this("", "") {}
+import com.google.firebase.firestore.Exclude
+
+data class Drawing constructor(
+    @Exclude var id: String,
+    var name: String,
+    var content: String
+) {
+    constructor() : this("", "", "") {}
 }

@@ -1,16 +1,16 @@
 package com.codrut.drawingapp.view.custom
 
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.Paint
-import android.graphics.Path
+import android.graphics.*
 import android.util.AttributeSet
+import android.util.Half.toFloat
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewConfiguration
 import androidx.core.content.res.ResourcesCompat
 import com.codrut.drawingapp.R
+import com.codrut.drawingapp.model.domain.Drawing
+import com.codrut.drawingapp.utils.ImageEncoder
 import com.codrut.drawingapp.viewModel.ImageViewModel
 
 private const val STROKE_WIDTH = 12f
@@ -20,6 +20,7 @@ class CanvasView(context: Context, attr: AttributeSet) : View(context, attr) {
     private lateinit var imageViewModel: ImageViewModel
     private lateinit var extraCanvas: Canvas
     private lateinit var extraBitmap: Bitmap
+    private var imageFirebaseId = ""
 
     private val backgroundColor = ResourcesCompat.getColor(resources, R.color.backgroundColor, null)
     private val drawColor = ResourcesCompat.getColor(resources, R.color.paintColor, null)
@@ -49,10 +50,11 @@ class CanvasView(context: Context, attr: AttributeSet) : View(context, attr) {
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
 
-        if(::extraBitmap.isInitialized) extraBitmap.recycle()
+        if (::extraBitmap.isInitialized) extraBitmap.recycle()
 
         imageViewModel = ImageViewModel()
-        extraBitmap = Bitmap.createBitmap(w,h, Bitmap.Config.ARGB_8888)
+
+        extraBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
         extraCanvas = Canvas(extraBitmap)
         extraCanvas.drawColor(backgroundColor)
     }
@@ -68,7 +70,7 @@ class CanvasView(context: Context, attr: AttributeSet) : View(context, attr) {
         motionTouchEventX = event.x
         motionTouchEventY = event.y
 
-        when(event.action) {
+        when (event.action) {
             MotionEvent.ACTION_DOWN -> touchDown()
             MotionEvent.ACTION_MOVE -> touchMove()
             MotionEvent.ACTION_UP -> touchUp()
@@ -78,8 +80,7 @@ class CanvasView(context: Context, attr: AttributeSet) : View(context, attr) {
     }
 
     private fun touchUp() {
-
-        imageViewModel.update(extraBitmap)
+        imageViewModel.update(imageFirebaseId, extraBitmap)
         path.reset()
     }
 
@@ -87,8 +88,13 @@ class CanvasView(context: Context, attr: AttributeSet) : View(context, attr) {
         val dx = Math.abs(motionTouchEventX - currentX)
         val dy = Math.abs(motionTouchEventY - currentY)
 
-        if(dx >= touchTolerance || dy >= touchTolerance){
-            path.quadTo(currentX, currentY, (motionTouchEventX + currentX) / 2, (motionTouchEventY + currentY) / 2)
+        if (dx >= touchTolerance || dy >= touchTolerance) {
+            path.quadTo(
+                currentX,
+                currentY,
+                (motionTouchEventX + currentX) / 2,
+                (motionTouchEventY + currentY) / 2
+            )
 
             currentX = motionTouchEventX
             currentY = motionTouchEventY
@@ -104,5 +110,25 @@ class CanvasView(context: Context, attr: AttributeSet) : View(context, attr) {
 
         currentX = motionTouchEventX
         currentY = motionTouchEventY
+
+        extraCanvas.drawPoint(motionTouchEventX, motionTouchEventY, paintBrush)
+    }
+
+    public fun setImage(image: Drawing) {
+        this.imageFirebaseId = image.id
+
+        val decodedImage: Bitmap? = ImageEncoder.decodeImage(image.content)
+        if (decodedImage != null) {
+            createCanvas(decodedImage)
+        } else {
+            createCanvas(extraBitmap)
+        }
+    }
+
+    private fun createCanvas(bitmap: Bitmap) {
+        extraBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
+        extraCanvas = Canvas(extraBitmap)
+        draw(extraCanvas)
+        invalidate()
     }
 }

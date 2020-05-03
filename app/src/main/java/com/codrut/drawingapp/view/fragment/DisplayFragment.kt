@@ -18,7 +18,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.codrut.drawingapp.R
 import com.codrut.drawingapp.view.activity.CanvasActivity
 import com.codrut.drawingapp.view.activity.IMAGE_FIREBASE_ID
+import com.codrut.drawingapp.view.listView.ClickListener
 import com.codrut.drawingapp.view.listView.ImageGridAdapter
+import com.codrut.drawingapp.view.listView.RecyclerTouchListener
 import com.codrut.drawingapp.viewModel.ImageViewModel
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
@@ -53,11 +55,21 @@ class DisplayFragment : Fragment() {
         val recyclerView: RecyclerView = view.findViewById(R.id.recyclerView)
         val manager: RecyclerView.LayoutManager = GridLayoutManager(context, 2)
         recyclerView.layoutManager = manager
-        imageViewModel.getImages().observe(this, Observer{ images ->
-            for(image in images)
-                Log.d(TAG, image.name)
-
+        imageViewModel.getImages().observe(viewLifecycleOwner, Observer { images ->
             recyclerView.adapter = ImageGridAdapter(images, context)
+
+            recyclerView.addOnItemTouchListener(RecyclerTouchListener(context!!, recyclerView, object: ClickListener {
+                override fun onClick(view: View, position: Int) {
+                    val firebaseId = images.get(position).id
+                    val intent = Intent(context!!, CanvasActivity::class.java)
+                    intent.putExtra(IMAGE_FIREBASE_ID, firebaseId)
+                    startActivity(intent)
+                }
+
+                override fun onLongClick(view: View, position: Int) {
+
+                }
+            }))
         })
     }
 
@@ -73,13 +85,13 @@ class DisplayFragment : Fragment() {
                 val drawingEditText = view.findViewById<EditText>(R.id.drawing_edit_text)
                 var drawingId: String = ""
 
-                imageViewModel.create(drawingEditText.text.toString()).observe(this, Observer<String> {
-                    drawingId = it
-                })
-
-                val intent = Intent(context!!, CanvasActivity::class.java)
-                intent.putExtra(IMAGE_FIREBASE_ID, drawingId)
-                startActivity(intent)
+                imageViewModel.create(drawingEditText.text.toString())
+                    .observe(viewLifecycleOwner, Observer {
+                        Log.d(TAG, it.id)
+                        val intent = Intent(context!!, CanvasActivity::class.java)
+                        intent.putExtra(IMAGE_FIREBASE_ID, it.id)
+                        startActivity(intent)
+                    })
             })
             .create()
 

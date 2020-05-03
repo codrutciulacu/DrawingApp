@@ -14,21 +14,25 @@ class ImageRepository {
     }
 
     fun create(imageName: String, imageResponseListener: ImageResponseListener) {
-        val drawing = Drawing(imageName, "")
+        val drawing = Drawing("", imageName, "")
         storage.collection("images")
             .add(drawing)
             .addOnCompleteListener {
                 Log.d(TAG, "The images is uploaded")
                 if (it.isSuccessful) {
-                    imageResponseListener.getImageId(it.result!!.id)
+                    it.result!!.get().addOnSuccessListener {
+                        val drawing: Drawing = it.toObject(Drawing::class.java)!!
+                        drawing.id = it.id
+                        imageResponseListener.getImage(drawing)
+                    }
                 }
             }
             .addOnFailureListener { e -> Log.e(TAG, "Error writing document", e) }
     }
 
-    fun update(encodedImage: String?) {
+    fun update(imageFirebaseId: String, encodedImage: String?) {
         storage.collection("images")
-            .document("img1")
+            .document(imageFirebaseId)
             .update(mapOf<String, String>("content" to encodedImage!!))
     }
 
@@ -42,6 +46,7 @@ class ImageRepository {
                         val documents = snapshot.documents
                         documents.forEach { document ->
                             val drawing: Drawing = document.toObject(Drawing::class.java)!!
+                            drawing.id = document.id
 
                             images.add(drawing)
                         }
@@ -55,10 +60,11 @@ class ImageRepository {
     }
 
     fun get(image: String, imageResponseListener: ImageResponseListener) {
-        storage.collection("images").document("img1").get()
+        storage.collection("images").document(image).get()
             .addOnCompleteListener {
                 if (it.isSuccessful) {
                     val drawing: Drawing = it.result!!.toObject(Drawing::class.java)!!
+                    drawing.id = it.result!!.id
                     imageResponseListener.getImage(drawing)
                 }
             }
