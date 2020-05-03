@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">DrawingApp</string>
+    <string name="canvasContentDescription">Canvas view</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="item_name_placeholder">Item Name</string>
+</resources>

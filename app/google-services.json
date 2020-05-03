@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "115737847955",
+    "firebase_url": "https://drawingapp-b069d.firebaseio.com",
+    "project_id": "drawingapp-b069d",
+    "storage_bucket": "drawingapp-b069d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:115737847955:android:5d9d7624a899187e0b4566",
+        "android_client_info": {
+          "package_name": "com.codrut.drawingapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "115737847955-aasukb67arcte70frfko8anioqtjd9vf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.codrut.drawingapp",
+            "certificate_hash": "2089d7bcb3ff2f60f506bb53a5afb51cc0b46de3"
+          }
+        },
+        {
+          "client_id": "115737847955-iir9fu1f2ur2utosf20tavqvb4s5etjm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD8mzRZrOqAMkpT51VJgeCDbW0-mbmX3ro"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "115737847955-iir9fu1f2ur2utosf20tavqvb4s5etjm.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
