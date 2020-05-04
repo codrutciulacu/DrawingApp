@@ -3,7 +3,6 @@ package com.codrut.drawingapp.viewModel
 import android.graphics.Bitmap
 import android.os.Build
 import android.util.Log
-import androidx.annotation.DrawableRes
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -52,7 +51,6 @@ class ImageViewModel : ViewModel(),
 
         return imageListLiveData
     }
-
     override fun getAllImages(images: List<Drawing>) {
         imageListLiveData.postValue(images)
     }
@@ -61,5 +59,9 @@ class ImageViewModel : ViewModel(),
         imageRepository.create(imageName, this@ImageViewModel)
 
         return imageLiveData
+    }
+
+    fun delete(imageId: String) {
+        imageRepository.delete(imageId)
     }
 }

@@ -69,4 +69,8 @@ class ImageRepository {
                 }
             }
     }
+
+    fun delete(image: String) {
+        storage.collection("images").document(image).delete()
+    }
 }

@@ -27,17 +27,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
-        android.R.id.home -> {
-            if(supportFragmentManager.backStackEntryCount > 0)
-                supportFragmentManager.popBackStack()
-            true
-        }
         else -> super.onOptionsItemSelected(item)
     }
 
     private fun displayFragment(fragment: Fragment) {
         supportFragmentManager.beginTransaction()
-            .addToBackStack(null)
             .replace(R.id.fragment_container, fragment).commit()
     }
 }

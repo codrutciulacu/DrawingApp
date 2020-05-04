@@ -67,7 +67,17 @@ class DisplayFragment : Fragment() {
                 }
 
                 override fun onLongClick(view: View, position: Int) {
+                    AlertDialog.Builder(context!!)
+                        .setTitle("Delete item")
+                        .setMessage("Are you sure you want to delete this item? ")
+                        .setNegativeButton("Cancel", DialogInterface.OnClickListener { dialog, id ->
+                            dialog.dismiss()
+                        }).setPositiveButton("Delete", DialogInterface.OnClickListener { dialog, id ->
+                            val firebaseId = images.get(position).id
+                            imageViewModel.delete(firebaseId)
 
+                            dialog.dismiss()
+                        }).create().show()
                 }
             }))
         })
@@ -83,13 +93,13 @@ class DisplayFragment : Fragment() {
                 dialog.dismiss()
             }).setPositiveButton("Add", DialogInterface.OnClickListener { dialog, id ->
                 val drawingEditText = view.findViewById<EditText>(R.id.drawing_edit_text)
-                var drawingId: String = ""
 
                 imageViewModel.create(drawingEditText.text.toString())
                     .observe(viewLifecycleOwner, Observer {
                         Log.d(TAG, it.id)
                         val intent = Intent(context!!, CanvasActivity::class.java)
                         intent.putExtra(IMAGE_FIREBASE_ID, it.id)
+
                         startActivity(intent)
                     })
             })
