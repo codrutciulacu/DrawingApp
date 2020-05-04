@@ -90,6 +90,7 @@ class DisplayFragment : Fragment() {
                         Log.d(TAG, it.id)
                         val intent = Intent(context!!, CanvasActivity::class.java)
                         intent.putExtra(IMAGE_FIREBASE_ID, it.id)
+
                         startActivity(intent)
                     })
             })
